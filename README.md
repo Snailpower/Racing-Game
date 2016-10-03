@@ -1,2 +1,1 @@
-# Battle_of_Assault
-Cardgame by the Kloters
+# Memeteam racer or whatever
