@@ -6,20 +6,18 @@ public class PlayerController : MonoBehaviour {
     public GameObject player;
     public GameObject bullet;
 
-    public Text countText;
-    public Text lifeAmount;
-    public float speed;
+    public Text ammoCount;
+    public Text lifeCount;
+
+    //Sets the car speed, ammo and lives
+    public float speed = 10;
     public int lives = 8;
+    public int ammo = 0;
 
     //sounds
     public AudioClip engine1;
-    public AudioClip engine2;
     public AudioClip shot;
-    public AudioClip crash1;
     public AudioClip crash2;
-    public AudioClip crash3;
-    public AudioClip crash4;
-    public AudioClip crash5;
     public AudioClip pickup;
     public AudioClip youWin;
     public AudioClip youLose;
@@ -28,7 +26,6 @@ public class PlayerController : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        checkCount = 0;
         SetCountText();
 
         EngineSound();
@@ -43,16 +40,18 @@ public class PlayerController : MonoBehaviour {
         audio.clip = engine1;
         audio.PlayDelayed(0.0f);
 
-
     }
 
     // Update is called once per frame
     void Update ()
     {
-        //audio init
+        //audio initialisation
         AudioSource audio = GetComponent<AudioSource>();
 
-        //Player Controls
+        /*
+         * Player Controls
+         */
+
         //Movement
         float horizontal = Input.GetAxis("Horizontal");
 
@@ -67,13 +66,12 @@ public class PlayerController : MonoBehaviour {
 
         gameObject.transform.position = new Vector3(Mathf.Clamp(player_x, 2.0F, 48.0F), player_y, player_z);
 
-
-        //Shooting
+        //Makes the player shoot with spacebar and reduces the ammo count by 1 when doing so (also plays a cool shooting sound)
         bool input = Input.GetButtonDown("Fire");
 
-        if (input == true && checkCount >= 1)
+        if (input == true && ammo >= 1)
         {
-            checkCount--;
+            ammo--;
 
             SetCountText();
 
@@ -84,7 +82,7 @@ public class PlayerController : MonoBehaviour {
             audio.PlayDelayed(0.1f);
         }
 
-        //Checks amount of lives and acts accordingly
+        //Checks amount of lives and acts accordingly (when your lives reach 0, the game resets it to 8. Yes, this is easy mode)
         if (lives == 0)
         {
             lives = 8;
@@ -94,20 +92,22 @@ public class PlayerController : MonoBehaviour {
             audio.PlayDelayed(0.1f);
         }
 
-        Debug.Log(lives);
-        
-
+        //Debug.Log(lives);
     }
 
+    //Adds the amount of ammo and lives to the UI
     void SetCountText()
     {
-        countText.text = "Ammo: " + checkCount.ToString();
+        ammoCount.text = "Ammo: " + ammo.ToString();
 
-        lifeAmount.text = "Lives: " + lives.ToString();
+        lifeCount.text = "Lives: " + lives.ToString();
     }
 
-    private int checkCount;
-
+    /*
+     * Lowers the lives count by one when hitting another obstacle and resets the player position to the start
+     * Raises the ammo count by one when hitting a pickup
+     * Plays a winning sound when hitting the finish and resets the player position to the start
+     */ 
     void OnTriggerEnter(Collider other)
     {
         AudioSource audio = GetComponent<AudioSource>();
@@ -119,7 +119,7 @@ public class PlayerController : MonoBehaviour {
         {
             transform.position = new Vector3(25, 0, 10);
 
-            other.gameObject.SetActive(false);
+            Destroy(other.gameObject);
 
             lives--;
             SetCountText();
@@ -132,9 +132,9 @@ public class PlayerController : MonoBehaviour {
 
         if (other.gameObject.CompareTag("Pickup"))
         {
-            checkCount++;
+            ammo++;
 
-            other.gameObject.SetActive(false);
+            Destroy(other.gameObject);
 
             SetCountText();
 

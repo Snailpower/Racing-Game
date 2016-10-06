@@ -8,12 +8,13 @@ public class BulletCollision : MonoBehaviour
     public GameObject bullet;
     public GameObject obstacle;
 
+    //Bullet speed
     public float speed = 10.0f;
 
     // Use this for initialization
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -23,12 +24,17 @@ public class BulletCollision : MonoBehaviour
         float player_y = player.transform.up.y;
         float player_z = player.transform.forward.z;
 
-        bullet.transform.Translate(player_x - player_x, player_y - player_y, player_z * speed);
+        //Propels the bullet forwards on the Z axis with the player as startposition
+        transform.Translate(player_x - player_x, (player_y - player_y) + 0.05f, player_z * speed);
+
+        //Debug.Log(player_y);
     }
 
+    /*
+     * Destroys the obstacle the bullet hits and removes the bullet
+     */ 
     void OnTriggerEnter(Collider other)
     {
-
         //Debug.Log("hit");
 
         if (other.gameObject.CompareTag("Obstacle"))
