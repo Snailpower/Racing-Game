@@ -1,1 +1,1 @@
-# Memeteam racer or whatever
+A very basic racing game made while using Unity for the first time
